@@ -1,4 +1,4 @@
-# part a:
+# part "../2024"a:
 
 n, index = input().split(' ')
 

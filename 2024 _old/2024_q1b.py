@@ -1,4 +1,4 @@
-# part b:
+# part "../2024"b:
 
 # output = 12
 
