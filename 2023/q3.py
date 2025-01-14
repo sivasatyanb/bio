@@ -1,47 +1,65 @@
-initialState = ['12', '', '3', '4']
-initialState = [[int(digit) for digit in n] if n else [] for n in initialState]
+from collections import deque
 
-finalState = ['1', '32', '4', '']
-finalState = [[int(digit) for digit in n] if n else [] for n in finalState]
+# initialState = ['12', '', '3', '4']
 
-# we will treat all pegs like a stack, so a state compremises of four stacks (where some could be empty)
+initialState = input().split(' ')
+
+global finalState
+finalState = input().split(' ')
+
+initialState = [[int(digit) for digit in n] if n != '0' else [] for n in initialState]
+finalState = [[int(digit) for digit in n] if n != '0' else [] for n in finalState]
+
+# print(finalState)
+
+# print(initialState)
 
 def generateMoves(state):
     validMoves = []
     # this is each peg
     for i in range(len(state)):
         if len(state[i]) != 0:
+            # this is the ball at the top of each peg
             ball = state[i][-1]
-            # this is each ball
+            # this is every peg that the selected ball can move to
             for j in range(len(state)): 
+                # only move if current peg != new peg
                 if i != j:
                     # copy old state
                     newState = [peg for peg in state]
-                    # copy bottom of stack
-                    newState[i] = newState[i][:-1]
-                    # change top of stack
-                    newState[j] = newState[j] + [ball]
+                    # remove ball from current peg
+                    newState[i] = state[i][:-1]
+                    # add ball to new peg
+                    newState[j] = state[j] + [ball]
                     validMoves.append(newState)
     return validMoves
 
-# recursive function
-def findMinimumMoves(currentState, finalState, depth):
-    if currentState == finalState:
-        return depth
+def breadthFirstSearch(initialState):
+    visited = set()
+    queue = deque([(initialState, 0)])
     
-    for nextState in generateMoves(currentState):
-        moves = min(findMinimumMoves(nextState, finalState, depth + 1))
-    
-    return moves
+    while queue:
+        currentState, depth = queue.popleft()
+        hash = tuple(tuple(peg) for peg in currentState)
+        # print(hash)
+        
+        if hash in visited:
+            continue
+        
+        visited.add(hash)
 
-moves = findMinimumMoves(initialState, finalState, 0)
+        if currentState == finalState:
+            return depth
 
-print(moves)
+        for nextState in generateMoves(currentState):
+            queue.append((nextState, depth + 1))
+
+result = breadthFirstSearch(initialState)
+print(result)
 
 # moves = generateMoves(initialState)
 
 # print(len(moves))
 
 # for move in moves:
-#     print(*move, '\n')
-
+#     print(*move)
